@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "hicpp-multiway-paths-covered"
 #include <LED.h>
 
 void LED_init() {
@@ -91,3 +93,5 @@ void RGB_off(uint8_t color) {
 
 
 
+
+#pragma clang diagnostic pop

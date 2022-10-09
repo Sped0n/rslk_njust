@@ -1,5 +1,7 @@
 #include <msp432p401r.h>
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "EndlessLoop"
 int main(void) {
     // disable watchdog
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;
@@ -14,3 +16,5 @@ int main(void) {
 
     return 0;
 }
+
+#pragma clang diagnostic pop
