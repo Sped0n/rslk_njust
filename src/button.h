@@ -5,7 +5,8 @@
 
 #include <driverlib.h>
 
-void button_init(void);
+void button_basic_init(void);
 uint8_t get_button_state(uint8_t position);
+void button_interrupt_init(void);
 
 #endif //RSLK_BUTTON_H
