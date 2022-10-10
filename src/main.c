@@ -1,46 +1,44 @@
 #pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-branch-clone"
 #pragma ide diagnostic ignored "hicpp-multiway-paths-covered"
 #pragma ide diagnostic ignored "cert-msc50-cpp"
+
 #include <LED.h>
 #include <button.h>
 #include <driverlib.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
+
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
+
+// 将Port1用作按钮中断的独占方程，当然有特殊需求也可以后面自行修改方程内容
+void PORT1_IRQHandler(void) {
+    // 声明状态变量
+    uint32_t Status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
+    // 左键
+    if (Status & GPIO_PIN1) {
+        GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
+    }
+        // 右键
+    else if (Status & GPIO_PIN4) {
+        GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
+    }
+    // 执行完程序以后清楚中断状态
+    GPIO_clearInterruptFlag(GPIO_PORT_P1, Status);
+}
+
+
 int main(void) {
     // 关闭watchdog
     MAP_WDT_A_holdTimer();
-    LED_init();
     int counter = 0;
-    volatile int temp = -1;
-    volatile int i;
-
-    button_init();
+    volatile uint32_t i;
+    // 模块初始化
+    LED_init();
+    button_interrupt_init();
     while (1) {
-        for (i = 0; i < 1000; i++) {
-            if (get_button_state(RIGHT)) {
-                while (1) {
-                    temp = rand() % 7;
-                    if (temp != counter) {
-                        break;
-                    }
-                }
-                counter = temp;
-                break;
-            }
-            if (get_button_state(LEFT)) {
-                counter++;
-                if (counter >= 7) {
-                    counter = 0;
-                }
-                break;
-            }
-        }
-
+        for(i=0;i<15000;i++){}
         switch (counter) {
             case 0:
                 RGB_pure(RED);
@@ -64,10 +62,12 @@ int main(void) {
                 RGB_pure(WHITE);
                 break;
         }
+        counter++;
+        if (counter ==7){
+            counter = 0;
+        }
     }
 }
-
-
 
 #pragma clang diagnostic pop
 #pragma clang diagnostic pop
