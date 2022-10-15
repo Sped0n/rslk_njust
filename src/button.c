@@ -46,8 +46,6 @@ void button_interrupt_init(void) {
     Interrupt_enableInterrupt(INT_PORT1);
     // 启动全局中断功能
     Interrupt_enableMaster();
-    GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1);
-    GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN4);
 }
 
 #pragma clang diagnostic pop
