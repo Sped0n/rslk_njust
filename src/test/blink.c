@@ -1,20 +1,16 @@
-#include <msp432p401r.h>
+#include <driverlib.h>
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 int main(void) {
     // disable watchdog
-    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;
-
-    P1DIR |= BIT0;  // P1_0
-
+    MAP_WDT_A_holdTimer();
+    GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
     volatile int i;
     while (1) {
         for (i = 0; i < 100000; i++);  // Delay
-        P1OUT ^= BIT0;  // toggle the LED
+        GPIO_toggleOutputOnPin(GPIO_PORT_P1, GPIO_PIN0);
     }
-
-    return 0;
 }
 
 #pragma clang diagnostic pop
