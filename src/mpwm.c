@@ -11,9 +11,6 @@ void RGB_mpwm_output(uint8_t selectColor, uint16_t strength, uint8_t PulseWidth,
     if (strength > 100) {
         strength = 100;
     }
-    else if (strength < 0) {
-        strength = 0;
-    }
     for (uint16_t i = 0; i < lastMul; i++) {
         if (strength == 0) {
             RGB_clear();

@@ -64,7 +64,7 @@ int main(void) {
         for(int i=0;i<1000;i++){
             // 按下按键红灯
             if ((get_button_state(LEFT)) || (get_button_state(RIGHT))){
-                        RED_on();
+                RED_on();
             }
             // 渐变函数
             RGB_mpwm_output(color, timer/5, 1, freq);
@@ -80,7 +80,12 @@ int main(void) {
                 timer--;
             }
         }
+        color++;
+        if (color==8){
+            color=1;
+        }
     }
+
 }
 
 #pragma clang diagnostic pop
