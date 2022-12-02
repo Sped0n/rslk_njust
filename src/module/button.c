@@ -1,6 +1,6 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-branch-clone"
-#include <button.h>
+#include "button.h"
 
 void button_basic_init(void) {
     // 设置两个按键为输入模式

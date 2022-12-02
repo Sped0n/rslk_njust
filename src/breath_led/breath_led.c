@@ -3,11 +3,11 @@
 #pragma ide diagnostic ignored "hicpp-multiway-paths-covered"
 #pragma ide diagnostic ignored "cert-msc50-cpp"
 
-#include <LED.h>
-#include <button.h>
+#include "module/LED.h"
+#include "module/button.h"
 #include <driverlib.h>
 #include <stdint.h>
-#include <mpwm.h>
+#include "module/mpwm.h"
 #include <msp432p401r.h>
 
 
