@@ -1,7 +1,7 @@
 #include "bump.h"
 
-#define delay_param 60000
-
+#define delay_param 720000
+#define turn_param 1600
 
 
 void bump_init() {
@@ -35,7 +35,7 @@ void bump_control_right(uint32_t timer) {
 
 void bump_control_left(uint32_t timer) {
     motor_backward(100);
-    for (uint16_t i1 = 0; i1 < delay_param; i1++);
+    for (uint32_t i1 = 0; i1 < delay_param; i1++);
     spin_left(100);
     for (uint32_t i2 = 0; i2 < timer; i2++);
     motor_forward(40);
@@ -45,22 +45,22 @@ void bump(uint8_t status) {
     //根据标志位的值做出相应的操作并且对标志位清零
     switch (status) {
         case 1:
-            bump_control_left(20000);
+            bump_control_left(200 * turn_param);
             break;
         case 2:
-            bump_control_left(30000);
+            bump_control_left(300 * turn_param);
             break;
         case 3:
-            bump_control_left(40000);
+            bump_control_left(400 * turn_param);
             break;
         case 4:
-            bump_control_right(40000);
+            bump_control_right(400 * turn_param);
             break;
         case 5:
-            bump_control_right(30000);
+            bump_control_right(300 * turn_param);
             break;
         case 6:
-            bump_control_right(20000);
+            bump_control_right(200 * turn_param);
             break;
         default:
             break;
@@ -68,6 +68,7 @@ void bump(uint8_t status) {
 }
 
 void PORT4_IRQHandler() {
+    motor_backward(100);
     uint16_t Status;
     uint16_t i = 0;
     uint8_t bump_state = 0;
@@ -103,6 +104,7 @@ void PORT4_IRQHandler() {
             bump_state = 6;
         }
     }
+    motor_forward(10);
     GPIO_clearInterruptFlag(GPIO_PORT_P4, Status);
     bump(bump_state);
 }
