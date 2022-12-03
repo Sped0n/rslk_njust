@@ -12,13 +12,16 @@ void motor_init(void) {
     GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN6);
     GPIO_setOutputLowOnPin(GPIO_PORT_P3, GPIO_PIN7);
 
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2,GPIO_PIN7,GPIO_PRIMARY_MODULE_FUNCTION);
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2,GPIO_PIN6,GPIO_PRIMARY_MODULE_FUNCTION);
+
     Timer_A_PWMConfig TIMA0_PWMConfig;
     TIMA0_PWMConfig.clockSource = TIMER_A_CLOCKSOURCE_SMCLK;
     TIMA0_PWMConfig.clockSourceDivider = 6;
-    TIMA0_PWMConfig.timerPeriod = 19999;
+    TIMA0_PWMConfig.timerPeriod = 10000;
     TIMA0_PWMConfig.compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3;
     TIMA0_PWMConfig.compareOutputMode = TIMER_A_OUTPUTMODE_TOGGLE_SET;
-    TIMA0_PWMConfig.dutyCycle = 9999;
+    TIMA0_PWMConfig.dutyCycle = 5000;
 
     Timer_A_generatePWM(TIMER_A0_BASE, &TIMA0_PWMConfig);
     TIMA0_PWMConfig.compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4;
@@ -42,7 +45,7 @@ void motor_forward(uint8_t speed) {
     if (speed > 100) {
         speed = 100;
     }
-    uint32_t real_speed = floor((speed / 100.0) * 9999);
+    uint16_t real_speed = floor((speed / 100.0) * 9999);
     if (real_speed > 9999) {
         real_speed = 9999;
     }
@@ -58,7 +61,7 @@ void motor_backward(uint8_t speed) {
     if (speed > 100) {
         speed = 100;
     }
-    uint32_t real_speed = floor((speed / 100.0) * 9999);
+    uint16_t real_speed = floor((speed / 100.0) * 9999);
     Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, real_speed);
     Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_4, real_speed);
 }
@@ -76,8 +79,8 @@ void motor_right(uint8_t speed, double_t ratio) {
     if (speed > 100) {
         speed = 100;
     }
-    uint32_t slow_side = floor((speed / 100.0) * 9999);
-    uint32_t fast_side = floor(slow_side * ratio);
+    uint16_t slow_side = floor((speed / 100.0) * 9999);
+    uint16_t fast_side = floor(slow_side * ratio);
     if (fast_side > 9999) {
         fast_side = 9999;
         slow_side = floor(fast_side / ratio);
@@ -99,8 +102,8 @@ void motor_left(uint8_t speed, double_t ratio) {
     if (speed > 100) {
         speed = 100;
     }
-    uint32_t slow_side = floor((speed / 100.0) * 9999);
-    uint32_t fast_side = floor(slow_side * ratio);
+    uint16_t slow_side = floor((speed / 100.0) * 9999);
+    uint16_t fast_side = floor(slow_side * ratio);
     if (fast_side > 9999) {
         fast_side = 9999;
         slow_side = floor(fast_side / ratio);
@@ -117,11 +120,11 @@ void spin_right(uint8_t speed) {
     if (speed > 100) {
         speed = 100;
     }
-    uint32_t real_speed = floor((speed / 100.0) * 9999);
-    Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, real_speed);
-    Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_4, real_speed);
+    uint16_t real_speed = floor((speed / 100.0) * 9999);
     GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN6);
     GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN7);
+    Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, real_speed);
+    Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_4, real_speed);
 }
 
 void spin_left(uint8_t speed) {
@@ -132,7 +135,9 @@ void spin_left(uint8_t speed) {
     if (speed > 100) {
         speed = 100;
     }
-    uint32_t real_speed = floor((speed / 100.0) * 9999);
+    uint16_t real_speed = floor((speed / 100.0) * 9999);
     GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN7);
     GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN6);
+    Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_3, real_speed);
+    Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_4, real_speed);
 }
