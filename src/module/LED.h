@@ -1,9 +1,9 @@
 #ifndef RSLK_LED_H
 #define RSLK_LED_H
 
-# define RED 1
-# define GREEN 2
-# define BLUE 3
+#define RED 1
+#define GREEN 2
+#define BLUE 3
 #define PURPLE 4
 #define YELLOW 5
 #define CYAN 6
