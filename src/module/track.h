@@ -8,8 +8,10 @@
 #include <driverlib.h>
 #include "motor.h"
 #include "CLK.h"
+#include "LED.h"
 
 void track_init();
 void track();
+void track_test();
 
 #endif //RSLK_TRACK_H

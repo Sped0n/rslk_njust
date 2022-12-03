@@ -1,17 +1,23 @@
 #include "track.h"
 
-uint8_t U1, U2, U3, U4, U5, U6, U7, U8;
+#define vert_delay 1500
+
+int U1, U2, U3, U4, U5, U6, U7, U8;
 
 void track_init() {
     GPIO_setAsInputPin(GPIO_PORT_P7,
                        GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2 | GPIO_PIN3 | GPIO_PIN4 | GPIO_PIN5 | GPIO_PIN6 | GPIO_PIN7);
     GPIO_setAsOutputPin(GPIO_PORT_P5, GPIO_PIN3);
     GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN3);
+    LED_init();
+    CLK_init();
+    SysTick_Init();
 }
 
 void track_scan() {
     //打开红外开关
     GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN3);
+
     //配置输出，为电容充电一段时间
     GPIO_setAsOutputPin(GPIO_PORT_P7,
                         GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2 | GPIO_PIN3 | GPIO_PIN4 | GPIO_PIN5 | GPIO_PIN6 | GPIO_PIN7);
@@ -19,10 +25,12 @@ void track_scan() {
                             GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2 | GPIO_PIN3 | GPIO_PIN4 | GPIO_PIN5 | GPIO_PIN6 |
                             GPIO_PIN7);
     delay_us(10);
+
     //配置为输入，等待电容放电
     GPIO_setAsInputPin(GPIO_PORT_P7,
                        GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2 | GPIO_PIN3 | GPIO_PIN4 | GPIO_PIN5 | GPIO_PIN6 | GPIO_PIN7);
     delay_us(500);
+
     //读取传感器的值
     U1 = GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN0);
     U2 = GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN1);
@@ -32,76 +40,124 @@ void track_scan() {
     U6 = GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN5);
     U7 = GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN6);
     U8 = GPIO_getInputPinValue(GPIO_PORT_P7, GPIO_PIN7);
+
     //关闭红外开关
     GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN3);
 }
 
 // 90 degrees turn
 void vertical_left() {
-    motor_forward(80);
+    motor_forward(25);
+    int i = 0;
     while (!(U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0)) {
         track_scan();
+        i++;
+        if (i >= vert_delay) {
+            break;
+        }
     }
-    spin_left(80);
-    while (U5 != 1) {
-        track_scan();
+    if (i < vert_delay) {
+        spin_left(60);
+        while (U4 != 1) {
+            track_scan();
+        }
+        motor_forward(40);
     }
-    motor_forward(80);
 }
 
 void vertical_right() {
-    motor_forward(80);
+    motor_forward(25);
+    int i = 0;
     while (!(U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0)) {
         track_scan();
+        i++;
+        if (i >= vert_delay) {
+            break;
+        }
     }
-    spin_right(80);
-    while (U4 != 1) {
-        track_scan();
+    if (i < vert_delay) {
+        spin_right(60);
+        while (U4 != 1) {
+            track_scan();
+        }
+        motor_forward(40);
     }
-    motor_forward(80);
 }
 
 void track() {
     track_scan();
-
+    // straight
     if (U1 == 0 && U2 == 0 && U3 == 0 && U4 == 1 && U5 == 1 && U6 == 0 && U7 == 0 && U8 == 0) {
-        motor_forward(80);
-    }
-    else if (U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0) {
-
-    }
-    // crossroad
-    else if (U1 == 1 && U2 == 1 && U3 == 1 && U4 == 1 && U5 == 1 && U6 == 1 && U7 == 1 && U8 == 1) {
-        motor_forward(80);
-    }
-    else if (U1 == 0 && U2 == 0 && U3 == 0 && U4 == 1 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0) {
-        motor_left(65, 1.23);
-    }
-    else if (U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 1 && U6 == 0 && U7 == 0 && U8 == 0) {
-        motor_right(65, 1.23);
-    }
-    else if (U1 == 1 && U2 == 1 && U3 == 1 && U7 == 0 && U8 == 0) {
+        RGB_pure(2);
+        motor_forward(45);
+    } else if (U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0) {
+        RED_on();
+        spin_right(40);
+        while (U4 != 1) {
+            track_scan();
+        }
+        motor_forward(30);
+        RED_off();
+    } else if (U3 == 1 && U4 == 1 && U5 == 1 && U6 == 1) {
+        RGB_pure(7);
+        motor_forward(100);
+    } else if (U1 == 0 && U2 == 0 && U3 == 0 && U4 == 1 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0) {
+        RGB_pure(5);
+        motor_left(40, 1.2);
+    } else if (U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 1 && U6 == 0 && U7 == 0 && U8 == 0) {
+        RGB_pure(5);
+        motor_right(40, 1.2);
+    } else if (U1 == 0 && U2 == 0 && U3 == 1) {
+        RGB_pure(6);
+        motor_left(35, 1.5);
+    } else if (U6 == 1 && U7 == 0 && U8 == 0) {
+        RGB_pure(6);
+        motor_right(35, 1.5);
+    } else if (U7 == 1 && U6 == 0) {
+        RGB_pure(4);
+        motor_right(25, 1.9);
+    } else if (U2 == 1 && U3 == 0) {
+        RGB_pure(4);
+        motor_left(25, 1.9);
+    } else if (U1 == 1 && U3 == 1 && U6 == 0 && U7 == 0 && U8 == 0) {
+        RGB_pure(3);
         vertical_left();
-    }
-    else if (U6 == 1 && U7 == 1 && U8 == 1 && U1 == 0 && U2 == 0 && U3 == 0) {
+    } else if (U6 == 1 && U8 == 1 && U1 == 0 && U2 == 0 && U3 == 0) {
+        RGB_pure(3);
         vertical_right();
+    } else if (U7 == 1) {
+        RGB_pure(1);
+        spin_right(40);
+    } else if (U2 == 1) {
+        RGB_pure(1);
+        spin_left(40);
     }
-    else if (U7 == 1 && U6 == 0) {
-        motor_right(60, 1.33);
+}
+
+void track_test() {
+    track_scan();
+    if (U1 == 1) {
+        RGB_pure(1);
     }
-    else if (U2 == 1 && U3 == 0) {
-        motor_left(60, 1.33);
+    if (U2 == 1) {
+        RGB_pure(2);
     }
-    else if (U3 == 1) {
-        motor_left(55, 1.45);
+    if (U3 == 1) {
+        RGB_pure(3);
     }
-    else if (U6 == 1) {
-        motor_right(55, 1.45);
+    if (U4 == 1) {
+        RGB_pure(4);
     }
-    else if (U7 == 1) {
-        spin_right(100);
+    if (U5 == 1) {
+        RGB_pure(5);
     }
-    else if (U2 == 1) {
-        spin_left(100);
+    if (U6 == 1) {
+        RGB_pure(6);
+    }
+    if (U7 == 1) {
+        RGB_pure(7);
+    }
+    if (U8 == 1) {
+        RGB_clear();
     }
 }
