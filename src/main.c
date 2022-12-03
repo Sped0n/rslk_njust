@@ -4,6 +4,7 @@
 #pragma ide diagnostic ignored "cert-msc50-cpp"
 
 #include "module/track.h"
+#include "module/LED.h"
 #include <driverlib.h>
 #include <stdint.h>
 #include <msp432p401r.h>
@@ -16,8 +17,9 @@ int main(void) {
     motor_init();
     track_init();
     motor_start();
-    track();
-
+    while (1) {
+        track();
+    }
 }
 
 #pragma clang diagnostic pop
