@@ -51,13 +51,17 @@ void vertical_left() {
     int i = 0;
     while (!(U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0)) {
         track_scan();
+        if (U2 == 1 && U3 == 1 && U4 == 1 && U5 == 1 && U6 == 1 && U8 == 1) {
+            i = vert_delay;
+            break;
+        }
         i++;
         if (i >= vert_delay) {
             break;
         }
     }
     if (i < vert_delay) {
-        spin_left(60);
+        spin_left(70);
         while (U4 != 1) {
             track_scan();
         }
@@ -70,13 +74,17 @@ void vertical_right() {
     int i = 0;
     while (!(U1 == 0 && U2 == 0 && U3 == 0 && U4 == 0 && U5 == 0 && U6 == 0 && U7 == 0 && U8 == 0)) {
         track_scan();
+        if (U2 == 1 && U3 == 1 && U4 == 1 && U5 == 1 && U6 == 1 && U8 == 1) {
+            i = vert_delay;
+            break;
+        }
         i++;
         if (i >= vert_delay) {
             break;
         }
     }
     if (i < vert_delay) {
-        spin_right(60);
+        spin_right(70);
         while (U4 != 1) {
             track_scan();
         }
