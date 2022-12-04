@@ -3,6 +3,7 @@
 #define delay_param 720000
 #define turn_param 1600
 
+uint8_t bump_flag = 0;
 
 void bump_init() {
     GPIO_setAsInputPin(GPIO_PORT_P4, GPIO_PIN0 | GPIO_PIN2 | GPIO_PIN3 | GPIO_PIN5 | GPIO_PIN6 | GPIO_PIN7);
@@ -66,9 +67,18 @@ void bump(uint8_t status) {
             break;
     }
 }
+void bump_enable(){
+    bump_flag = 1;
+}
+
+void bump_disable(){
+    bump_flag = 0;
+}
 
 void PORT4_IRQHandler() {
-    motor_backward(100);
+    if (bump_flag){
+        motor_backward(100);
+    }
     uint16_t Status;
     uint16_t i = 0;
     uint8_t bump_state = 0;
@@ -104,7 +114,9 @@ void PORT4_IRQHandler() {
             bump_state = 6;
         }
     }
-    motor_forward(10);
     GPIO_clearInterruptFlag(GPIO_PORT_P4, Status);
-    bump(bump_state);
+    if (bump_flag){
+        motor_forward(10);
+        bump(bump_state);
+    }
 }

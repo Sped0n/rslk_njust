@@ -9,5 +9,7 @@
 #include "motor.h"
 
 void bump_init();
+void bump_enable();
+void bump_disable();
 
 #endif //RSLK_BUMP_H
