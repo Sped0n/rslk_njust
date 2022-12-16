@@ -29,19 +29,13 @@ int main(void) {
     SysTick_Init();
     remote_init();
     LED_init();
+    bump_init();
     distance_init();
     track_init();
     motor_init();
     uint8_t mode = 0;
     while (1) {
         uint8_t key = remote_scan();
-        if (key == 162) {
-            mode = 0; // track + bump
-        } else if (key == 98) {
-            mode = 1; // manual control
-        } else if (key == 226) {
-            mode = 2; // track + distance
-        }
         // mode select
         switch (key) {
             case 162:
@@ -108,4 +102,3 @@ int main(void) {
 
 #pragma clang diagnostic pop
 #pragma clang diagnostic pop
-
