@@ -65,9 +65,9 @@ framework = tirtos
 
 ## 效果
 
-![IMB_izxJc1](https://img.sped0nwen.com/image/2022/12/16/ph35up-0.gif "循线测试")
+![IMB_izxJc1](/doc/ph35up-0.gif "循线测试")
 
-![IMB_dUO5es](https://img.sped0nwen.com/image/2022/12/16/qt4nwv-0.gif "系统测试")
+![IMB_dUO5es](/doc/qt4nwv-0.gif "系统测试")
 
 ## 文档
 
@@ -267,7 +267,7 @@ mpwm初始化
 
 > **按键键值说明：**
 >
-> ![img.png](https://github.com/Sped0n/rslk_njust/blob/main/doc/img.png?raw=true)
+> ![img.png](/doc/img.png)
 
 #### `void remote_init(void)`
 
